@@ -19,6 +19,7 @@ description: >-
 ```
 用户说「提交代码」
   → 审查变更（status + diff）
+  → 检查文件大小（对大文件提示用户决定）
   → 智能 stage（排除不应该提交的文件）
   → 生成中文 commit 消息
   → 执行 commit
@@ -61,7 +62,29 @@ git branch --show-current
 git diff                 # 查看详细变更
 ```
 
-### Step 3: 规划 stage
+### Step 3: 检查文件大小（重要）
+
+在 stage 之前，先检查所有待提交文件的大小。**大文件会导致 pre-commit hook 失败（check-added-large-files），应提前处理。**
+
+```bash
+# 检查所有待提交文件的大小（含 untracked）
+git status --porcelain | awk '{print $2}' | xargs ls -lh 2>/dev/null | sort -k5 -rh
+
+# 或使用 du 精准查看每个文件
+git status --porcelain | awk '{print $2}' | xargs du -sh 2>/dev/null | sort -rh
+```
+
+**检查标准（默认阈值：500KB）：**
+- 文件 ≤ 500KB → 正常提交
+- 文件 > 500KB → **必须询问用户**如何处理
+
+**大文件处理选项（向用户呈现）：**
+
+1. **不提交该文件** — 将文件移出 stage（`git rm --cached <file>`），后续用 `.gitignore` 忽略或用 Git LFS 管理
+2. **强制提交** — 跳过 pre-commit 的文件大小检查（`--no-verify`），但需用户确认
+3. **使用 Git LFS** — 如果项目已配置 LFS，指导用户通过 LFS 管理大文件
+
+### Step 4: 规划 stage
 
 决定哪些文件应该被纳入本次提交：
 
@@ -72,7 +95,7 @@ git diff                 # 查看详细变更
 **不应该 stage 的（谨慎处理）：**
 - 构建产物（dist/、build/、*.pyc 等）—— 通常在 .gitignore 里
 - 临时文件、日志文件
-- 过于庞大的数据文件（除非确定需要）
+- 超过 500KB 的大文件（除非用户确认要提交）
 - `.omo/` 目录下的运行时数据（除非用户明确要求）
 - 用户明确说不需要提交的文件
 
@@ -82,7 +105,7 @@ git diff                 # 查看详细变更
 git add <file1> <file2> ...
 ```
 
-### Step 4: 生成中文 commit 消息
+### Step 5: 生成中文 commit 消息
 
 用**中文**写 commit 消息。格式建议：
 
@@ -110,13 +133,13 @@ git add <file1> <file2> ...
 - 简要说明改动的内容和原因
 - 如果涉及多个不相关的改动，询问用户是否要拆分为多个 commit
 
-### Step 5: 执行 Commit
+### Step 6: 执行 Commit
 
 ```bash
 git commit -m "<type>: <中文描述>"
 ```
 
-### Step 6: 处理 Pre-commit Hook 失败
+### Step 7: 处理 Pre-commit Hook 失败
 
 **这是最容易出问题的步骤，需要格外注意。**
 
@@ -132,11 +155,14 @@ git commit -m "<type>: <中文描述>"
    git commit -m "<相同的消息>"
    ```
 4. 如果第二次还是失败，**仔细阅读错误信息**，判断是：
-   - 可自动修复的问题 → 修复后重新 stage + commit
-   - 需要用户决策的问题 → 报告给用户，等待指示
-   - 与当前改动无关的 pre-existing 问题 → 告知用户，可选择 `--no-verify` 跳过（但需要用户确认）
+   - **可自动修复的问题**（trailing-whitespace、end-of-file-fixer 等）→ 重新 stage + commit
+   - **check-added-large-files（文件过大）** → 询问用户：
+     - 如果不想提交该大文件 → `git rm --cached <file>` 后重新 commit
+     - 如果确实需要提交 → 使用 `--no-verify` 跳过检查（需用户确认）
+   - **需要用户决策的其他问题** → 报告给用户，等待指示
+   - **与当前改动无关的 pre-existing 问题** → 告知用户，可选择 `--no-verify` 跳过（但需要用户确认）
 
-### Step 7: Push 到远程
+### Step 8: Push 到远程
 
 ```bash
 git push
@@ -154,7 +180,7 @@ git push              # 再推送
 git push -u origin <branch-name>
 ```
 
-### Step 8: 报告结果
+### Step 9: 报告结果
 
 以简洁的方式告知用户最终结果：
 
@@ -216,6 +242,25 @@ git status 显示有 untracked 文件 .agent/skills/xxx/
 → 后续流程相同
 ```
 
+### 示例 4：大文件处理
+
+```
+用户: 帮我提交代码
+
+Step 1: git status → 看到新增文件 result-card.png（858KB）
+Step 2: review diff
+Step 3: 检查文件大小 → 发现 result-card.png 858KB > 500KB
+→ 询问用户："result-card.png (858KB) 超过 500KB 限制。是否要提交？"
+→ 用户选择不提交
+→ git rm --cached .agent/skills/darwin-skill/templates/result-card.png
+Step 4: stage 其他文件
+Step 5: commit → pre-commit 通过
+Step 6: push
+
+结果: ✅ 已提交并推送
+  Commit: a1b2c3d - feat: 添加新 skill（result-card.png 已排除）
+```
+
 ---
 
 ## 与 git-master 的协作
@@ -248,3 +293,10 @@ git status 显示有 untracked 文件 .agent/skills/xxx/
 
 ### 提交时检测到敏感信息
 - 如果发现密码、token、密钥等，警告用户并要求确认
+
+### 大文件（>500KB）
+- 在 stage 前使用 `git status --porcelain | awk '{print $2}' | xargs ls -lh` 检查文件大小
+- 发现超过 500KB 文件时，询问用户是否提交
+- 如果用户选择不提交，使用 `git rm --cached <file>` 从 stage 中移除
+- 如果用户强制提交，使用 `--no-verify` 跳过 pre-commit 检查
+- 对于项目中常见的大文件，建议配置 `.gitignore` 或过渡到 Git LFS
