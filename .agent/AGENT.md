@@ -28,38 +28,62 @@ Both agents are built on top of **AgentPool** (`packages/agentpool/`), a unified
 │   └── git.md            # Git workflow and commit conventions
 ├── memory/
 │   └── decisions.md      # Architecture Decision Records (ADRs)
-└── skills/               # Reusable capability definitions (31+ community skills installed)
-    ├── brainstorming/    # (obra) Guided brainstorming workflows
-    ├── dispatching-parallel-agents/  # (obra) Parallel agent orchestration
-    ├── executing-plans/  # (obra) Plan execution patterns
-    ├── finishing-a-development-branch/  # (obra) Branch completion workflows
-    ├── receiving-code-review/  # (obra) Handling code reviews
-    ├── requesting-code-review/  # (obra) Requesting code reviews
-    ├── subagent-driven-development/  # (obra) Subagent-driven development
-    ├── systematic-debugging/  # (obra) Structured debugging
-    ├── test-driven-development/  # (obra) TDD workflows
-    ├── using-git-worktrees/  # (obra) Git worktree usage
-    ├── using-superpowers/  # (obra) Superpowers usage guide
-    ├── verification-before-completion/  # (obra) Pre-completion verification
-    ├── writing-plans/    # (obra) Plan writing
-    ├── writing-skills/   # (obra) Skill authoring
-    ├── algorithmic-art/  # (anthropic) Generative art creation
-    ├── brand-guidelines/ # (anthropic) Brand consistency enforcement
-    ├── canvas-design/    # (anthropic) HTML Canvas design
-    ├── claude-api/       # (anthropic) Claude API integration
-    ├── doc-coauthoring/  # (anthropic) Document co-authoring
-    ├── docx/             # (anthropic) DOCX generation
-    ├── frontend-design/  # (anthropic) Frontend UI/UX design
-    ├── internal-comms/   # (anthropic) Internal communications
-    ├── mcp-builder/      # (anthropic) MCP server building
-    ├── pdf/              # (anthropic) PDF generation
-    ├── pptx/             # (anthropic) PPTX generation
-    ├── skill-creator/    # (anthropic) Skill creation framework
-    ├── slack-gif-creator/ # (anthropic) Slack GIF creation
-    ├── theme-factory/    # (anthropic) Theme generation
-    ├── web-artifacts-builder/ # (anthropic) Web artifact building
-    ├── webapp-testing/   # (anthropic) Web app testing
-    └── xlsx/             # (anthropic) Excel/Spreadsheet generation
+└── skills/               # Reusable capability definitions (50+ skills installed)
+    │                       # Grouped by source for maintainability
+    │
+    ├── # Obra Workflow (14)
+    ├── brainstorming/    # Guided brainstorming workflows
+    ├── dispatching-parallel-agents/  # Parallel agent orchestration
+    ├── executing-plans/  # Plan execution patterns
+    ├── finishing-a-development-branch/  # Branch completion workflows
+    ├── receiving-code-review/  # Handling code reviews
+    ├── requesting-code-review/  # Requesting code reviews
+    ├── subagent-driven-development/  # Subagent-driven development
+    ├── systematic-debugging/  # Structured debugging
+    ├── test-driven-development/  # TDD workflows
+    ├── using-git-worktrees/  # Git worktree usage
+    ├── using-superpowers/  # Superpowers usage guide
+    ├── verification-before-completion/  # Pre-completion verification
+    ├── writing-plans/    # Plan writing
+    └── writing-skills/   # Skill authoring
+    │
+    ├── # Anthropic Suite (17)
+    ├── algorithmic-art/  # Generative art creation
+    ├── brand-guidelines/ # Brand consistency enforcement
+    ├── canvas-design/    # HTML Canvas design
+    ├── claude-api/       # Claude API integration
+    ├── doc-coauthoring/  # Document co-authoring
+    ├── docx/             # DOCX generation
+    ├── frontend-design/  # Frontend UI/UX design
+    ├── internal-comms/   # Internal communications
+    ├── mcp-builder/      # MCP server building
+    ├── pdf/              # PDF generation
+    ├── pptx/             # PPTX generation
+    ├── security-review/  # Security vulnerability audit
+    ├── skill-creator/    # Skill creation framework
+    ├── slack-gif-creator/ # Slack GIF creation
+    ├── theme-factory/    # Theme generation
+    ├── web-artifacts-builder/ # Web artifact building
+    ├── webapp-testing/   # Web app testing
+    └── xlsx/             # Excel/Spreadsheet generation
+    │
+    └── # Custom / User-installed (16)
+        ├── code-submit/              # Code submission workflows
+        ├── create-agent-skills/      # Agent skill creation
+        ├── create-skill-file/        # Skill file scaffolding (zh)
+        ├── create-skill-file-EN/     # Skill file scaffolding (en)
+        ├── daily-ai-news/            # Daily AI news digest
+        ├── darwin-skill/             # Darwin-themed interaction
+        ├── deep-reading-analyst/     # Deep reading & analysis
+        ├── dry-refactoring/          # DRY-principled refactoring
+        ├── fastgpt-workflow-generator/ # FastGPT workflow generation
+        ├── heal-skill/               # Skill healing & repair
+        ├── local-diff-review/        # Local diff code review
+        ├── metaskill/                # Meta-skill framework
+        ├── planning-with-files/      # File-based planning
+        ├── prompt-master/            # Prompt engineering
+        ├── prompt-optimize/          # Prompt optimization
+        └── software-copyright-writer/ # Software copyright docs
 ```
 
 **Progressive disclosure**: Only read the files relevant to your current task.
