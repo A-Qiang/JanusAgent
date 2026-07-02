@@ -1,0 +1,17 @@
+[project]
+name = "quant-agent"
+version = "0.1.0"
+description = "JanusAgent Quant Face — 量化交易智能体"
+readme = "README.md"
+authors = [
+    { name = "qiang.zeng", email = "285093074@qq.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+quant-agent = "quant_agent:main"
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12.0"]
+build-backend = "uv_build"

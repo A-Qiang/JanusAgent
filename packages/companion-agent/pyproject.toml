@@ -1,0 +1,17 @@
+[project]
+name = "companion-agent"
+version = "0.1.0"
+description = "JanusAgent Companion Face — 情感陪伴智能体"
+readme = "README.md"
+authors = [
+    { name = "qiang.zeng", email = "285093074@qq.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+companion-agent = "companion_agent:main"
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12.0"]
+build-backend = "uv_build"
