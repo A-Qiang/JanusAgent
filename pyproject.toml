@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "agent-core",
+    "agent-rl",
     "quant-agent",
     "companion-agent",
 ]
@@ -23,5 +24,6 @@ dev = [
 
 [tool.uv.sources]
 agent-core = { workspace = true }
+agent-rl = { workspace = true }
 quant-agent = { workspace = true }
 companion-agent = { workspace = true }
