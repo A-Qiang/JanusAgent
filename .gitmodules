@@ -1,0 +1,4 @@
+[submodule "packages/agentpool"]
+	path = packages/agentpool
+	url = https://github.com/A-Qiang/agentpool.git
+	branch = fix/todo-list

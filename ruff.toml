@@ -1,0 +1,62 @@
+target-version = "py312"
+line-length = 100
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "YTT", # flake8-2020 (annoying, I hate the year problem)
+    "ASYNC",  # flake8-async
+    "S",   # flake8-bandit (security)
+    "BLE", # flake8-blind-except
+    "B",   # flake8-bugbear
+    "A",   # flake8-builtins
+    "COM", # flake8-commas
+    "C4",  # flake8-comprehensions
+    "T10", # flake8-debugger
+    "EM",  # flake8-errmsg
+    "G",   # flake8-logging-format
+    "LOG", # flake8-logging (stdlib logging)
+    "PIE", # flake8-pie
+    "T20", # flake8-print
+    "RSE", # flake8-raise
+    "RET", # flake8-return
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "PTH", # flake8-use-pathlib
+    "RUF", # ruff-specific rules
+    "NPY", # NumPy-specific rules
+    "PERF",# perflint
+    "FURB",# refurb
+]
+ignore = [
+    "COM812",  # trailing comma missing — conflicts with formatter
+    "SIM108",  # use ternary — often hurts readability
+    "SIM117",  # merge with-statements — not always desirable
+    "SIM114",  # merge if-statements with or — not always clearer
+    "RET504",  # unnecessary assignment before return — false positives with type narrowing
+    "EM101",   # raw string in exception — acceptable for simple scripts
+    "EM102",   # f-string in exception — acceptable for simple scripts
+    "FBT001",  # boolean-typo — too noisy for flag parameters
+    "FBT002",  # boolean-default — too noisy for flag parameters
+    "S104",    # possible binding to all interfaces — intentional
+]
+fixable = ["ALL"]
+unfixable = ["ERA001"]  # commented-out code — manual review only
+
+[lint.per-file-ignores]
+"tests/**" = ["S101", "S106", "PLR2004", "INP001"]
+
+[lint.isort]
+known-first-party = ["agentpool", "acp", "agentpool_storage", "agentpool_config", "agentpool_server", "agentpool_toolsets", "agentpool_cli", "agentpool_commands", "agentpool_prompts"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = 60

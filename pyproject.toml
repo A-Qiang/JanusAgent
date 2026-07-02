@@ -1,0 +1,27 @@
+[project]
+name = "janus-agent"
+version = "0.1.0"
+description = "JanusAgent - 面向私人的双面智能体框架 / A customizable dual-faced personal agent framework"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "agent-core",
+    "quant-agent",
+    "companion-agent",
+]
+
+[tool.uv.workspace]
+members = [
+    "packages/*",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.0",
+    "ruff>=0.11",
+]
+
+[tool.uv.sources]
+agent-core = { workspace = true }
+quant-agent = { workspace = true }
+companion-agent = { workspace = true }
