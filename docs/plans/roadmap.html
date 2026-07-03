@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JanusAgent 产品路线图 · Roadmap</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #1a1d27;
+    --panel-2: #232734;
+    --border: #2e3342;
+    --text: #e6e8ee;
+    --muted: #9aa1b1;
+    --accent: #6c8cff;
+    --accent-2: #a78bfa;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --cyan: #22d3ee;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 0 80px;
+  }
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1a1d27 0%, #232231 60%, #2a2440 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 16px 30px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 30px; margin-bottom: 10px; letter-spacing: .5px; }
+  .hero .slogan {
+    font-size: 16px; color: var(--accent-2); font-weight: 600; margin-bottom: 6px;
+  }
+  .hero .slogan .en { color: var(--muted); font-weight: 400; font-style: italic; }
+  .hero .northstar {
+    max-width: 760px; margin: 14px auto 0; color: var(--muted); font-size: 14px;
+    background: rgba(108,140,255,.08); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 18px;
+  }
+
+  /* Nav */
+  nav {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(15,17,23,.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+  }
+  nav .navwrap { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  nav a {
+    color: var(--muted); text-decoration: none; font-size: 13px;
+    padding: 5px 12px; border-radius: 999px; border: 1px solid transparent;
+    transition: all .15s;
+  }
+  nav a:hover { color: var(--text); border-color: var(--accent); background: var(--panel-2); }
+
+  /* Section */
+  section { margin-top: 40px; }
+  section > h2 {
+    font-size: 21px; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--border);
+  }
+  section > h2 .num {
+    flex: 0 0 auto; width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff; font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lead { color: var(--muted); font-size: 14px; margin: 12px 0; }
+  .lead strong { color: var(--text); }
+
+  /* Card */
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px; margin: 14px 0;
+  }
+  .card h3 { font-size: 16px; margin-bottom: 10px; color: var(--accent); }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table th, table td {
+    text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table th { color: var(--accent-2); font-size: 13px; white-space: nowrap; }
+  table tr:last-child td { border-bottom: none; }
+  table td strong { color: #fff; }
+  .tbl-wrap {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; margin: 14px 0;
+  }
+
+  /* Callout */
+  .callout {
+    border-left: 3px solid var(--accent); background: rgba(108,140,255,.07);
+    padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 14px 0;
+    font-size: 14px; color: var(--text);
+  }
+  .callout.warn { border-left-color: var(--amber); background: rgba(245,158,11,.08); }
+  .callout.danger { border-left-color: var(--red); background: rgba(239,68,68,.08); }
+
+  /* ASCII / pre */
+  pre {
+    background: #10121a; border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px; overflow-x: auto; font-size: 12.5px; line-height: 1.6;
+    color: #b9c0d4; font-family: "SF Mono", "Consolas", "Menlo", monospace;
+    margin: 14px 0;
+  }
+
+  /* Pillars grid */
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 14px; margin: 14px 0; }
+  .pillar {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+    position: relative; overflow: hidden;
+  }
+  .pillar .pnum { font-size: 32px; font-weight: 800; color: var(--accent); opacity: .35; line-height: 1; }
+  .pillar h4 { font-size: 15px; margin: 6px 0 8px; color: var(--text); }
+  .pillar p { font-size: 13px; color: var(--muted); }
+
+  /* Milestone timeline */
+  .timeline { position: relative; margin: 20px 0 0; padding-left: 28px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px;
+    width: 2px; background: var(--border);
+  }
+  .ms {
+    position: relative; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .ms::before {
+    content: ""; position: absolute; left: -23px; top: 18px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); border: 3px solid var(--bg);
+  }
+  .ms .ms-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ms .ms-tag {
+    font-size: 12px; font-weight: 700; color: #fff; padding: 2px 10px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  .ms .ms-title { font-size: 15px; font-weight: 600; }
+  .ms .ms-grid { display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 13px; color: var(--muted); }
+  .ms .ms-grid .row { display: flex; gap: 8px; }
+  .ms .ms-grid .k { flex: 0 0 76px; color: var(--accent-2); }
+
+  /* Month plan checklist */
+  .month { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin: 14px 0; }
+  .month h3 { color: var(--accent); font-size: 16px; margin-bottom: 10px; }
+  .check-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; padding: 4px 0; color: var(--muted); }
+  .check-item .box { flex: 0 0 auto; width: 15px; height: 15px; border: 2px solid var(--border); border-radius: 4px; margin-top: 4px; }
+  .verify { margin-top: 10px; font-size: 13px; color: var(--green); background: rgba(34,197,94,.08); padding: 8px 12px; border-radius: 8px; }
+
+  /* Baseline status */
+  .badge-st { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 6px; color: #fff; white-space: nowrap; }
+  .st-mature { background: var(--green); }
+  .st-skeleton { background: var(--amber); }
+  .st-empty { background: var(--muted); }
+
+  .tag-hot { color: var(--red); }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 46px; padding-top: 20px; border-top: 1px solid var(--border); }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🧭 JanusAgent 产品路线图</h1>
+  <div class="slogan">始于陪伴，终于进化 · <span class="en">Starts as a companion. Grows into you.</span></div>
+  <div class="northstar">
+    <strong>一句话北极星</strong>：Janus 是一个始于陪伴、与你共同进化的"活的"专属伙伴——既给你情绪价值，又能专业地帮你办事，越来越懂你，最终与你相辅相成、共同成长。
+  </div>
+</div>
+
+<nav>
+  <div class="navwrap">
+    <a href="#s1">① 北极星</a>
+    <a href="#s2">② 核心问题</a>
+    <a href="#s3">③ 技术主线</a>
+    <a href="#s4">④ 指标体系</a>
+    <a href="#s5">⑤ 里程碑</a>
+    <a href="#s6">⑥ 三月排期</a>
+    <a href="#s7">⑦ 具身愿景</a>
+    <a href="#s8">⑧ 现状基线</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- 1 北极星 -->
+  <section id="s1">
+    <h2><span class="num">1</span>北极星目标</h2>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>终极目标</th><td>一款有特色的<strong>通用 Agent 产品</strong>，并最终走向<strong>具身智能</strong>（embodied-agent），把专属陪伴与协助延伸到物理世界</td></tr>
+        <tr><th>演进策略</th><td>垂域（量化/陪伴）练手 → 沉淀通用技术 → 汇入通用内核 <code>agent-core</code> → 长成通用 agent</td></tr>
+        <tr><th>品牌名</th><td><strong>Janus</strong>（双面神：陪伴之面 + 专业之面）</td></tr>
+        <tr><th>中文 Slogan</th><td>始于陪伴，终于进化</td></tr>
+        <tr><th>英文 Slogan</th><td>Starts as a companion. Grows into you.</td></tr>
+        <tr><th>角色定位</th><td><strong>专属伙伴</strong>——既是陪你的人（情绪价值），也是帮你办事的搭档（个性化协助）</td></tr>
+      </table>
+    </div>
+    <div class="callout"><strong>评判一切工作的标准</strong>：是否服务于"从垂域沉淀出通用能力"这条主线。</div>
+  </section>
+
+  <!-- 2 核心问题 -->
+  <section id="s2">
+    <h2><span class="num">2</span>我们要解决的核心问题</h2>
+    <p class="lead">当前通用 agent 在两个维度都只做到"浅层定制"：</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>维度</th><th>主流做法</th><th>局限（要突破的）</th></tr></thead>
+        <tbody>
+          <tr><td>领域特化</td><td>提示词注入 / RAG</td><td>浅、脆，不是真专业</td></tr>
+          <tr><td>个人定制化</td><td>Memory 检索</td><td>浅、外挂式，不是真的内化</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><strong>通用的不是知识，而是"把 agent 深度特化到任意领域、深度定制到任意个人"的那套引擎本身。</strong></div>
+
+    <div class="card">
+      <h3>差异化：Janus 占「右上角」</h3>
+      <pre>       能干/专业协助 ▲
+   管家·秘书·专家    │   ★ Janus
+   (只办事,冷)       │  (既亲密又能干)
+   ──────────────────┼──────────────▶ 亲密/情感陪伴
+   普通工具          │   青梅竹马·挚友
+   (无关系无能力)    │   (只陪伴,不办事)</pre>
+      <p class="lead" style="margin-bottom:6px;"><strong>vs OpenClaw</strong>（有性格/记忆/进化，但偏通用执行、多个隔离 agent、走在线 RL）：</p>
+      <div class="ms-grid" style="font-size:13.5px;color:var(--muted);display:grid;gap:6px;">
+        <div>· <strong style="color:var(--text)">统一自我不漂移</strong>：一个连贯的自我 + 多个面，而非一堆隔离人格；进化的同时人格一致（alive 的前提）。</div>
+        <div>· <strong style="color:var(--text)">垂域专家手感</strong>：沉淀专家的隐性经验/手感（互联网上没有的 experience）。</div>
+        <div>· <strong style="color:var(--text)">技术路线更省更可控</strong>：上下文工程为主，小模型微调仅降本。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 技术主线 -->
+  <section id="s3">
+    <h2><span class="num">3</span>技术主线：三支柱（上下文工程为主）</h2>
+    <div class="grid-3">
+      <div class="pillar">
+        <div class="pnum">①</div>
+        <h4>拉平人（个人定制化）</h4>
+        <p><strong style="color:var(--text)">agent 自进化</strong>：画像/习惯驱动，自动沉淀 skill、自动优化 prompt、沉淀成功 case，拉平用户 prompt 能力参差。</p>
+      </div>
+      <div class="pillar">
+        <div class="pnum">②</div>
+        <h4>沉淀专家（领域特化）</h4>
+        <p>沉淀专家隐性经验/手感，随用户使用持续进化。</p>
+      </div>
+      <div class="pillar">
+        <div class="pnum">③</div>
+        <h4>记忆底座（支撑①②）</h4>
+        <p><strong style="color:var(--text)">agent 自身一致性/连贯性</strong> + 精准用户画像 + "画像+习惯+skill+长期 memory"的连贯性与时效性。</p>
+      </div>
+    </div>
+    <div class="callout warn">参数级手段（专业小模型后训练/微调/在线学习）<strong>仅作降本辅助</strong>，非核心引擎；<code>agent-rl</code> 定位为降本模块。</div>
+
+    <div class="card">
+      <h3>双向共生飞轮</h3>
+      <pre>   用户成长 ──喂养──▶ agent（提取你的专业手感/画像）
+      ▲                        │
+      │                     agent 更懂你、更专业
+   赋能用户 ◀──────── agent 成长（+ 从互联网自学）</pre>
+      <p class="lead" style="margin:0;">越转越强——始于陪伴（建立关系），终于进化（相互成就）。</p>
+    </div>
+  </section>
+
+  <!-- 4 指标体系 -->
+  <section id="s4">
+    <h2><span class="num">4</span>北极星指标体系</h2>
+    <p class="lead">设计原则：<strong>必须直接映射「陪伴（情绪价值）+ 个性化协助（任务价值）」两大核心特征，且单用户就能测。</strong></p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>角色</th><th>指标</th><th>测什么</th><th>怎么量</th></tr></thead>
+        <tbody>
+          <tr><td><strong>北极星（主）</strong></td><td><strong>专属度</strong></td><td>Janus 相比"无你记忆画像的通用 agent"多创造的价值</td><td><strong>对照法</strong>：Janus vs 剥离记忆画像的同基模对照，两场景各打分取差值</td></tr>
+          <tr><td>↳ 子维度</td><td>陪伴专属度</td><td>情绪价值溢价 + 黏性</td><td>主动关怀被正向回应率 + 连续使用天数</td></tr>
+          <tr><td>↳ 子维度</td><td>协助专属度</td><td>个性化办事溢价</td><td>无需重解释背景即办成的比例、人工纠正次数</td></tr>
+          <tr><td><strong>扩张</strong></td><td>垂域冷启动成本</td><td>新领域从零到可用的代价</td><td>达到质量阈值所需 数据量/时间/人工干预（prompt 自动生成）</td></tr>
+          <tr><td><strong>护栏</strong></td><td>人格一致性 / 不漂移</td><td>人格/价值观/对你的认知跨时间稳定</td><td>一致性探针：矛盾数 + 关键事实遗忘数（<strong>不得上升</strong>）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><strong>"进化"的证据 = 专属度 delta 随时间越拉越大。</strong></div>
+  </section>
+
+  <!-- 5 里程碑 -->
+  <section id="s5">
+    <h2><span class="num">5</span>里程碑 M0 ~ M4</h2>
+    <div class="timeline">
+      <div class="ms">
+        <div class="ms-head"><span class="ms-tag">M0</span><span class="ms-title">骨架跑通</span></div>
+        <div class="ms-grid">
+          <div class="row"><span class="k">目标</span><span><code>main.py</code> 启动 AgentPool，从 YAML 加载 agent，能对话</span></div>
+          <div class="row"><span class="k">退出标准</span><span><code>python main.py</code> 给出真实回复</span></div>
+          <div class="row"><span class="k">点亮指标</span><span>—（基建）</span></div>
+        </div>
+      </div>
+      <div class="ms">
+        <div class="ms-head"><span class="ms-tag">M2</span><span class="ms-title">协助面</span></div>
+        <div class="ms-grid">
+          <div class="row"><span class="k">目标</span><span>量化炒股 agent：行情数据 + 策略/回测 + 分析建议（先通用、模拟盘）</span></div>
+          <div class="row"><span class="k">退出标准</span><span>能做真实炒股分析/回测</span></div>
+          <div class="row"><span class="k">点亮指标</span><span>协助基础质量</span></div>
+        </div>
+      </div>
+      <div class="ms">
+        <div class="ms-head"><span class="ms-tag">M1</span><span class="ms-title">定制化 + 记忆底座</span></div>
+        <div class="ms-grid">
+          <div class="row"><span class="k">目标</span><span>画像（偏好/资金/习惯/风控）+ 长期记忆 + 一致性探针；策略随画像变（活的流程）</span></div>
+          <div class="row"><span class="k">退出标准</span><span>开/关画像对照 delta&gt;0</span></div>
+          <div class="row"><span class="k">点亮指标</span><span>协助专属度 + 一致性护栏</span></div>
+        </div>
+      </div>
+      <div class="ms">
+        <div class="ms-head"><span class="ms-tag">M3</span><span class="ms-title">自进化闭环</span></div>
+        <div class="ms-grid">
+          <div class="row"><span class="k">目标</span><span>skill 自动沉淀 / prompt 自动优化 / 成功 case 沉淀，飞轮转起来</span></div>
+          <div class="row"><span class="k">退出标准</span><span>专属度 delta 随时间上升</span></div>
+          <div class="row"><span class="k">点亮指标</span><span>专属度增长曲线↑</span></div>
+        </div>
+      </div>
+      <div class="ms">
+        <div class="ms-head"><span class="ms-tag">M4</span><span class="ms-title">通用内核</span></div>
+        <div class="ms-grid">
+          <div class="row"><span class="k">目标</span><span>把记忆/画像/自进化机制抽进 <code>agent-core</code>；新场景验证冷启动</span></div>
+          <div class="row"><span class="k">退出标准</span><span>新场景冷启动明显更省</span></div>
+          <div class="row"><span class="k">点亮指标</span><span>冷启动成本</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout warn">实际执行顺序见下方 3 个月排期（M0+M2 → M1+M3 → M4）。陪伴面（companion）暂不在 demo 内，demo 后作为"第二个面"长出，正好检验 <code>agent-core</code> 通用性。</div>
+  </section>
+
+  <!-- 6 三月排期 -->
+  <section id="s6">
+    <h2><span class="num">6</span>三个月 Demo 排期</h2>
+    <p class="lead">目标：<strong>3 个月做出一个"能提供定制化炒股策略的专属伙伴" demo。</strong></p>
+
+    <div class="month">
+      <h3>第 1 月 — M0 + M2：能帮我炒股的 Agent</h3>
+      <div class="check-item"><span class="box"></span><span>M0：<code>main.py</code> + AgentPool + YAML 加载 quant agent，跑通对话/工具调用</span></div>
+      <div class="check-item"><span class="box"></span><span>M2：行情数据（K 线/Bar）接入</span></div>
+      <div class="check-item"><span class="box"></span><span>M2：策略定义 + 回测框架</span></div>
+      <div class="check-item"><span class="box"></span><span>M2：输出炒股分析/建议（<strong>通用、无个性化</strong>）</span></div>
+      <div class="verify">本月验证：能不能办事（协助基础质量）；专属度此时还测不了</div>
+    </div>
+
+    <div class="month">
+      <h3>第 2 月 — M1 + M3(最小闭环)：懂我的定制化炒股伙伴</h3>
+      <div class="check-item"><span class="box"></span><span>M1：记忆底座（长期 memory + 一致性探针）— <em>全局最难的地基</em></span></div>
+      <div class="check-item"><span class="box"></span><span>M1：用户画像（偏好 / 资金 / 习惯 / 风控意识）</span></div>
+      <div class="check-item"><span class="box"></span><span>M1：炒股策略/流程随画像动态调整（活的流程）</span></div>
+      <div class="check-item"><span class="box"></span><span>M3（最小闭环）：认可的成功选股 case 自动沉淀 → 下次自动复用</span></div>
+      <div class="verify">本月验证：协助专属度 delta&gt;0 + 一致性护栏；专属度随周上升（M3 雏形）</div>
+    </div>
+
+    <div class="month">
+      <h3>第 3 月 — M4：通用内核沉淀方案</h3>
+      <div class="check-item"><span class="box"></span><span>把 quant 上验证的记忆/画像/自进化机制抽象进 <code>agent-core</code></span></div>
+      <div class="check-item"><span class="box"></span><span>（可选）拿一个新场景做快速冷启动，验证通用性</span></div>
+      <div class="check-item"><span class="box"></span><span><strong>预留具身抽象接口</strong>：统一 <code>perception</code>（感知输入）/ <code>actuation</code>（行动输出），内核模态无关，为未来具身零重构接入</span></div>
+      <div class="verify">本月验证：冷启动成本（通用性证据）</div>
+    </div>
+
+    <div class="card">
+      <h3>风险红线与务实提醒</h3>
+      <div class="ms-grid" style="font-size:13.5px;color:var(--muted);display:grid;gap:8px;">
+        <div>1. <strong style="color:var(--text)">第 1 月不焦虑专属度</strong>：M2 未个性化，只验证"能办事"。</div>
+        <div>2. <strong style="color:var(--text)">第 2 月最重、易过载</strong>：M3 只做最小闭环（成功 case 复用），完整自进化后置。</div>
+        <div>3. <strong class="tag-hot">炒股风险红线</strong>：demo 只做<strong style="color:var(--text)">分析 / 回测 / 模拟盘</strong>，<strong style="color:var(--text)">不接实盘下单</strong>。</div>
+        <div>4. <strong style="color:var(--text)">陪伴后置不等于放弃</strong>：companion 面 demo 后长出，当作通用内核的试金石。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 具身愿景 -->
+  <section id="s7">
+    <h2><span class="num">7</span>长期愿景 · 具身 Janus</h2>
+    <div class="callout">终极目标不止于纯软件。当软件内核（记忆 / 画像 / 自进化 / 人格一致）成熟后，把 Janus 接入<strong>具身载体</strong>，让专属的陪伴与协助从屏幕延伸到物理世界——<strong>同一个"自我"，跨越数字与物理</strong>。</div>
+
+    <div class="card">
+      <h3>形态设想：萌宠 / 萌玩载体</h3>
+      <p class="lead" style="margin:0;">参考《超能陆战队》大白（Baymax）——<strong>温暖、无威胁、天然适合陪伴</strong>。用可爱的萌宠/萌玩形象作为身体，降低亲近门槛，让"陪伴"从第一眼就成立。</p>
+    </div>
+
+    <div class="card">
+      <h3>能力闭环</h3>
+      <pre>多模感知              JanusAgent 内核           VLA 反馈
+触觉 · 视觉 · 语音  →  记忆 / 画像 / 人格一致  →  动作 · 语音 · 表情 · 眼神
+        ▲                                              │
+        └──────────────── 物理交互回路 ───────────────┘</pre>
+    </div>
+
+    <div class="card">
+      <h3>🌟 核心卖点：触觉感知与反馈</h3>
+      <p class="lead" style="margin:0 0 8px;">别人多在做视觉 + 语音，<strong>触觉是差异化护城河</strong>：</p>
+      <div class="check-item"><span class="box" style="border-color:var(--cyan)"></span><span><strong style="color:var(--text)">触觉感知</strong>：感知抚摸、拥抱、拍打等身体接触，读出情绪与意图。</span></div>
+      <div class="check-item"><span class="box" style="border-color:var(--cyan)"></span><span><strong style="color:var(--text)">触觉反馈</strong>：用温度、力度、震动、柔软触感回应——传递屏幕永远给不了的"温度感"，把陪伴的情绪价值拉满。</span></div>
+    </div>
+
+    <div class="grid-3">
+      <div class="pillar">
+        <h4>为什么要具身 · 陪伴</h4>
+        <p>物理在场（表情、眼神、动作、可触碰）带来屏幕给不了的情绪价值。</p>
+      </div>
+      <div class="pillar">
+        <h4>为什么要具身 · 协助</h4>
+        <p>从"给建议"升级到"动手做"，在真实环境里感知与行动。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>大方向（M5+，边做边调研细化）</h3>
+      <div class="ms-grid" style="font-size:13.5px;color:var(--muted);display:grid;gap:6px;">
+        <div>· 载体：先适配现成的具身平台 / 机器人本体，不自研硬件。</div>
+        <div>· 感知-行动闭环：多模感知（触觉/视觉/语音）→ 内核决策 → VLA 输出（动作/语音/表情/眼神）。</div>
+        <div>· 内核延伸：把已沉淀的用户画像、长期记忆、人格一致性<strong style="color:var(--text)">平滑延伸到具身形态</strong>（人不变，只是多了个身体）。</div>
+        <div>· 复用主线：具身层同样走"上下文工程为主"，把它当作 <code>agent-core</code> 的又一个"面 / 载体"来长出。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🌱 现在就埋的种子（接口预留）</h3>
+      <p class="lead" style="margin:0 0 8px;">软件内核阶段（M1 记忆底座 / M4 <code>agent-core</code>）就预留具身抽象，未来接入不重构：</p>
+      <div class="ms-grid" style="font-size:13.5px;color:var(--muted);display:grid;gap:6px;">
+        <div>· <strong style="color:var(--text)">统一感知输入接口</strong>：文本/语音之外预留 <code>perception</code> 抽象（视觉/触觉/空间信号可作为同一"输入事件"喂给内核）。</div>
+        <div>· <strong style="color:var(--text)">统一行动输出接口</strong>：文本回复之外预留 <code>actuation</code> 抽象（动作/表情/眼神/语音作为可插拔的输出通道）。</div>
+        <div>· <strong style="color:var(--text)">模态无关的内核</strong>：记忆/画像/人格只依赖抽象的"感知事件 / 行动意图"，不绑定具体模态——换身体不换灵魂。</div>
+      </div>
+    </div>
+    <div class="callout warn">⚠️ 本章仅定方向，不细化。随现有软件 demo 推进，同步调研具身技术栈（VLA、多模感知、触觉传感/执行、机器人中间件、仿真等）后再细化为具体里程碑。</div>
+  </section>
+
+  <!-- 8 现状基线 -->
+  <section id="s8">
+    <h2><span class="num">8</span>现状基线（起点）</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>包</th><th>状态</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>agentpool</code></td><td><span class="badge-st st-mature">成熟</span></td><td>编排引擎，多协议：ACP/A2A/AG-UI/MCP/OpenCode</td></tr>
+          <tr><td><code>agent-core</code></td><td><span class="badge-st st-empty">空壳</span></td><td>通用内核蓄水池，M4 让它长肉</td></tr>
+          <tr><td><code>quant-agent</code></td><td><span class="badge-st st-skeleton">骨架</span></td><td>M2 主战场</td></tr>
+          <tr><td><code>companion-agent</code></td><td><span class="badge-st st-skeleton">骨架</span></td><td>demo 后启动</td></tr>
+          <tr><td><code>agent-rl</code></td><td><span class="badge-st st-skeleton">骨架</span></td><td>+ verl 学习计划（降本辅助，远期）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">每周对照北极星指标做一次 check；每个里程碑 2~4 周。</div>
+  </section>
+
+  <footer>
+    JanusAgent · 产品路线图 · 始于陪伴，终于进化 &nbsp;|&nbsp; 配套任务清单见 <a href="./todolist.html">todolist.html</a> &nbsp;|&nbsp; 源文档 <a href="./roadmap.md">roadmap.md</a>
+  </footer>
+
+</div>
+</body>
+</html>
