@@ -86,9 +86,25 @@ docker pull verlai/verl:sgl055.latest    # SGLang 后端
 
 # 启动
 docker create --runtime=nvidia --gpus all --net=host --shm-size="10g" \
-  --cap-add=SYS_ADMIN -v .:/workspace/verl --name verl verlai/verl:vllm011.latest sleep infinity
+  --cap-add=SYS_ADMIN -v .:/workspace/verl --entrypoint sleep --name verl verlai/verl:vllm011.latest infinity
 docker start verl
 docker exec -it verl bash
+
+**参数解释：**
+
+| 参数 | 说明 |
+|------|------|
+| `--runtime=nvidia` | 使用 NVIDIA 容器运行时，**GPU 访问必需** |
+| `--gpus all` | 暴露所有 GPU 给容器，也可用 `--gpus '"device=0,1"'` 限制特定卡 |
+| `--net=host` | 使用宿主机网络栈，避免 NAT 开销，多节点 NCCL 通信必需 |
+| `--shm-size="10g"` | 共享内存设为 10GB，PyTorch DataLoader 多进程传数据必需（默认 64MB 不够） |
+| `--cap-add=SYS_ADMIN` | 授予内核能力，用于 profiler/内核参数调整（非必需，大部分训练不需要） |
+| `-v .:/workspace/verl` | 挂载当前目录到容器内 `/workspace/verl`，代码在宿主机编辑、容器内运行 |
+| `--name verl` | 容器命名为 `verl`，方便后续 `docker exec -it verl bash` 进入 |
+| `verlai/verl:vllm011.latest` | 镜像名:tag，对应 vLLM 0.11.x 后端的 verl 官方镜像 |
+| `sleep infinity` | 容器启动后永久睡眠，保持容器运行等待用户进入 |
+
+> `docker create` 只创建不启动，参数用法与 `docker run` 完全一致。之后手动 `docker start` 启动、`docker exec` 进入（详见 `docs/docker/docker-basics.md` §3.1.1）。
 
 # 安装 verl
 git clone https://github.com/verl-project/verl && cd verl

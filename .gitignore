@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Python wheels
+*.whl
+
+# Agent RL dependencies
+packages/agent-rl/verl/
