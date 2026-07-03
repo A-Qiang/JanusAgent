@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- @@TITLE@@ 由生成时替换为文档标题 -->
+<title>项目文档可视化</title>
+<style>
+  /* ===== 主题变量：深色 / 浅色 ===== */
+  html[data-theme="dark"] {
+    --bg:#0f1117; --panel:#1a1d27; --panel-2:#232734; --border:#2e3342;
+    --text:#e6e8ee; --muted:#9aa1b1; --accent:#6c8cff;
+    --todo:#6b7280; --doing:#3b82f6; --done:#22c55e; --block:#ef4444;
+    --p0:#ef4444; --p1:#f59e0b; --p2:#64748b;
+    --tl-line:#2e3342;
+  }
+  html[data-theme="light"] {
+    --bg:#f5f6fa; --panel:#ffffff; --panel-2:#eef1f7; --border:#dfe3ec;
+    --text:#1c2230; --muted:#5b6478; --accent:#3b5bff;
+    --todo:#94a3b8; --doing:#3b82f6; --done:#16a34a; --block:#dc2626;
+    --p0:#dc2626; --p1:#d97706; --p2:#64748b;
+    --tl-line:#dfe3ec;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.6; padding:24px 16px 80px;
+    transition:background .2s,color .2s;
+  }
+  .container { max-width:980px; margin:0 auto; }
+  header { margin-bottom:18px; }
+  h1 { font-size:26px; margin-bottom:8px; }
+  .subtitle { color:var(--muted); font-size:14px; }
+
+  .progress-card { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin:18px 0; }
+  .progress-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+  .progress-head .pct { font-size:22px; font-weight:700; color:var(--done); }
+  .bar { height:10px; background:var(--panel-2); border-radius:6px; overflow:hidden; }
+  .bar > span { display:block; height:100%; background:linear-gradient(90deg,#22c55e,#4ade80); width:0; transition:width .4s ease; }
+  .stat-row { display:flex; gap:16px; margin-top:14px; flex-wrap:wrap; font-size:13px; }
+  .stat-row .item { display:flex; align-items:center; gap:6px; color:var(--muted); }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+  .filters { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { background:var(--panel-2); border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:999px; cursor:pointer; font-size:13px; user-select:none; transition:all .15s; }
+  .chip:hover { border-color:var(--accent); color:var(--text); }
+  .chip.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .spacer { flex:1; }
+  .btn { background:var(--panel-2); border:1px solid var(--border); color:var(--muted); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:13px; }
+  .btn:hover { color:var(--text); border-color:var(--accent); }
+
+  .section { margin-bottom:26px; }
+  .section > h2 { font-size:18px; margin-bottom:4px; display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .section .sec-note { color:var(--muted); font-size:13px; margin:8px 0 6px; }
+  .subsection > h3 { font-size:15px; color:var(--accent); margin:16px 0 8px; }
+
+  .task { display:flex; align-items:flex-start; gap:10px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:8px; transition:background .15s,opacity .2s; }
+  .task:hover { background:var(--panel-2); }
+  .task.done { opacity:.55; }
+  .task.done .label { text-decoration:line-through; }
+  .status-btn { flex:0 0 auto; width:24px; height:24px; border-radius:7px; border:2px solid var(--border); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff; margin-top:1px; }
+  .status-btn.todo { border-color:var(--todo); }
+  .status-btn.doing { background:var(--doing); border-color:var(--doing); }
+  .status-btn.done { background:var(--done); border-color:var(--done); }
+  .status-btn.block { background:var(--block); border-color:var(--block); }
+  .badge { flex:0 0 auto; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; margin-top:2px; color:#fff; }
+  .badge.p0 { background:var(--p0); } .badge.p1 { background:var(--p1); } .badge.p2 { background:var(--p2); }
+  .label { flex:1; font-size:14px; }
+  .label strong { color:var(--text); font-weight:700; }
+  .task.hidden,.section.hidden,.subsection.hidden { display:none; }
+
+  /* ===== 时间轴 / 里程碑视图 ===== */
+  .timeline { position:relative; padding-left:28px; }
+  .timeline::before { content:""; position:absolute; left:9px; top:4px; bottom:4px; width:2px; background:var(--tl-line); }
+  .milestone { position:relative; margin-bottom:16px; }
+  .milestone::before { content:""; position:absolute; left:-24px; top:6px; width:14px; height:14px; border-radius:50%; background:var(--panel); border:3px solid var(--accent); }
+  .milestone.done::before { background:var(--done); border-color:var(--done); }
+  .milestone.doing::before { background:var(--doing); border-color:var(--doing); }
+  .milestone.block::before { background:var(--block); border-color:var(--block); }
+  .m-card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+  .m-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px; }
+  .m-tag { font-size:12px; font-weight:700; color:#fff; background:var(--accent); padding:2px 8px; border-radius:6px; }
+  .m-when { font-size:12px; color:var(--muted); }
+  .m-title { font-size:15px; font-weight:700; }
+  .m-desc { font-size:13px; color:var(--muted); }
+
+  footer { text-align:center; color:var(--muted); font-size:12px; margin-top:30px; }
+
+  /* ===== 打印样式 ===== */
+  @media print {
+    body { background:#fff; color:#000; padding:0; }
+    .toolbar,.status-btn,footer { display:none !important; }
+    .task,.progress-card,.m-card { border-color:#ccc; break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1 id="docTitle">项目文档</h1>
+    <p class="subtitle" id="docSubtitle"></p>
+  </header>
+
+  <div class="progress-card" id="progressCard">
+    <div class="progress-head"><div>总体进度</div><div class="pct" id="pct">0%</div></div>
+    <div class="bar"><span id="bar"></span></div>
+    <div class="stat-row" id="stats"></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="filters" id="statusFilters">
+      <span class="chip active" data-filter="status" data-val="all">全部</span>
+      <span class="chip" data-filter="status" data-val="todo">待办</span>
+      <span class="chip" data-filter="status" data-val="doing">进行中</span>
+      <span class="chip" data-filter="status" data-val="done">完成</span>
+      <span class="chip" data-filter="status" data-val="block">阻塞</span>
+    </div>
+    <div class="filters" id="prioFilters">
+      <span class="chip active" data-filter="prio" data-val="all">全部优先级</span>
+      <span class="chip" data-filter="prio" data-val="P0">P0</span>
+      <span class="chip" data-filter="prio" data-val="P1">P1</span>
+      <span class="chip" data-filter="prio" data-val="P2">P2</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="themeBtn">🌗 主题</button>
+    <button class="btn" id="exportBtn">⬇ 导出 MD</button>
+    <button class="btn" id="printBtn">🖨 打印</button>
+    <button class="btn" id="resetBtn">↺ 重置</button>
+  </div>
+
+  <div id="board"></div>
+  <footer>点击左侧方块循环切换状态：待办 → 进行中 → 完成 → 阻塞。状态自动保存在本地浏览器。</footer>
+</div>
+
+<script>
+/* ============================================================
+ * 数据区：生成时由 md 解析结果替换 META 与 DATA
+ * ------------------------------------------------------------
+ * META = { title, subtitle, storageKey }
+ * DATA = [ {
+ *   title:"章节标题", type:"tasks"|"timeline", note:"可选说明",
+ *   tasks:[ {p:"P0", t:"任务文本(支持<strong>)", status:"todo"} ],
+ *   subs:[ {title:"子分组", tasks:[...]} ],
+ *   milestones:[ {tag:"M0", when:"第1月", title:"", desc:"", status:"todo"} ]
+ * } ]
+ * ============================================================ */
+const META = {
+  title: "示例项目文档",
+  subtitle: "由 project-docs-to-html skill 生成的可视化页面。",
+  storageKey: "proj_docs_demo_v1"
+};
+const DATA = [
+  {
+    title: "🎯 示例：任务清单章节",
+    type: "tasks",
+    note: "type=tasks 用于 todolist 类内容",
+    tasks: [
+      { p:"P0", status:"doing", t:"这是一条<strong>进行中</strong>的示例任务" },
+      { p:"P1", status:"todo", t:"这是一条待办任务" },
+      { p:"P2", status:"done", t:"这是一条已完成任务" }
+    ]
+  },
+  {
+    title: "🗺 示例：里程碑时间轴章节",
+    type: "timeline",
+    milestones: [
+      { tag:"M0", when:"第 1 月", title:"骨架跑通", desc:"最小闭环", status:"done" },
+      { tag:"M1", when:"第 2 月", title:"记忆底座", desc:"定制化地基", status:"doing" },
+      { tag:"M2", when:"第 3 月", title:"通用内核", desc:"沉淀复用", status:"todo" }
+    ]
+  }
+];
+/* ==================== 数据区结束 ==================== */
+
+const STATUS_CYCLE = ["todo","doing","done","block"];
+const STATUS_LABEL = { todo:"待办", doing:"进行中", done:"完成", block:"阻塞" };
+const STATUS_MARK  = { todo:"", doing:"~", done:"✓", block:"!" };
+const STORAGE_KEY = META.storageKey || "proj_docs_v1";
+const THEME_KEY = STORAGE_KEY + "_theme";
+
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+let filter = { status:"all", prio:"all" };
+
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function taskId(si, subi, ti){ return "t_"+si+"_"+(subi===undefined?"x":subi)+"_"+ti; }
+function getStatus(id, def){ return state[id] || def || "todo"; }
+
+/* 初始化：把 DATA 里预设的 status 写入 state（仅首次） */
+function seedState(){
+  let changed = false;
+  DATA.forEach((sec, si) => {
+    const seed = (tasks, subi) => tasks && tasks.forEach((tk, ti) => {
+      const id = taskId(si, subi, ti);
+      if (state[id] === undefined && tk.status) { state[id] = tk.status; changed = true; }
+    });
+    if (sec.tasks) seed(sec.tasks, undefined);
+    if (sec.subs) sec.subs.forEach((sub, subi) => seed(sub.tasks, subi));
+  });
+  if (changed) saveState();
+}
+
+function passFilter(prio, status){
+  if (filter.status !== "all" && status !== filter.status) return false;
+  if (filter.prio !== "all" && prio !== filter.prio) return false;
+  return true;
+}
+
+function makeTask(tk, id){
+  const st = getStatus(id, tk.status);
+  const el = document.createElement("div");
+  el.className = "task" + (st === "done" ? " done" : "");
+  const btn = document.createElement("button");
+  btn.className = "status-btn " + st;
+  btn.textContent = STATUS_MARK[st];
+  btn.title = STATUS_LABEL[st];
+  btn.onclick = () => {
+    const cur = getStatus(id, tk.status);
+    state[id] = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur)+1) % STATUS_CYCLE.length];
+    saveState(); render();
+  };
+  const badge = document.createElement("span");
+  badge.className = "badge " + tk.p.toLowerCase();
+  badge.textContent = tk.p;
+  const label = document.createElement("div");
+  label.className = "label";
+  label.innerHTML = tk.t;
+  el.appendChild(btn); el.appendChild(badge); el.appendChild(label);
+  if (!passFilter(tk.p, st)) el.classList.add("hidden");
+  return { el, visible: passFilter(tk.p, st), status: st };
+}
+
+function makeMilestone(m){
+  const st = m.status || "todo";
+  const el = document.createElement("div");
+  el.className = "milestone " + st;
+  el.innerHTML =
+    '<div class="m-card"><div class="m-head">' +
+    '<span class="m-tag">' + m.tag + '</span>' +
+    '<span class="m-when">' + (m.when||"") + '</span>' +
+    '<span class="m-title">' + (m.title||"") + '</span></div>' +
+    (m.desc ? '<div class="m-desc">' + m.desc + '</div>' : '') + '</div>';
+  return el;
+}
+
+function render(){
+  document.getElementById("docTitle").textContent = META.title;
+  document.getElementById("docSubtitle").textContent = META.subtitle || "";
+  document.title = META.title;
+
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  let total = 0, counts = { todo:0, doing:0, done:0, block:0 };
+
+  DATA.forEach((sec, si) => {
+    const secEl = document.createElement("div");
+    secEl.className = "section";
+    const h2 = document.createElement("h2");
+    h2.textContent = sec.title;
+    secEl.appendChild(h2);
+    if (sec.note){ const p = document.createElement("div"); p.className="sec-note"; p.textContent=sec.note; secEl.appendChild(p); }
+    let visible = 0;
+
+    if (sec.type === "timeline" && sec.milestones){
+      const tl = document.createElement("div"); tl.className = "timeline";
+      sec.milestones.forEach(m => tl.appendChild(makeMilestone(m)));
+      secEl.appendChild(tl);
+      visible = 1; // 时间轴不参与任务筛选，始终展示
+    } else {
+      const renderTasks = (tasks, container, subi) => {
+        let vis = 0;
+        tasks.forEach((tk, ti) => {
+          const id = taskId(si, subi, ti);
+          const r = makeTask(tk, id);
+          total++; counts[r.status]++;
+          if (r.visible) vis++;
+          container.appendChild(r.el);
+        });
+        return vis;
+      };
+      if (sec.tasks) visible += renderTasks(sec.tasks, secEl, undefined);
+      if (sec.subs) sec.subs.forEach((sub, subi) => {
+        const subEl = document.createElement("div"); subEl.className = "subsection";
+        const h3 = document.createElement("h3"); h3.textContent = sub.title; subEl.appendChild(h3);
+        const vis = renderTasks(sub.tasks, subEl, subi);
+        if (vis === 0) subEl.classList.add("hidden");
+        visible += vis; secEl.appendChild(subEl);
+      });
+    }
+    if (visible === 0) secEl.classList.add("hidden");
+    board.appendChild(secEl);
+  });
+
+  const pct = total ? Math.round(counts.done / total * 100) : 0;
+  const hasTasks = total > 0;
+  document.getElementById("progressCard").style.display = hasTasks ? "" : "none";
+  document.getElementById("pct").textContent = pct + "%";
+  document.getElementById("bar").style.width = pct + "%";
+  document.getElementById("stats").innerHTML =
+    statItem("var(--done)","完成",counts.done) + statItem("var(--doing)","进行中",counts.doing) +
+    statItem("var(--block)","阻塞",counts.block) + statItem("var(--todo)","待办",counts.todo) +
+    statItem("transparent","总计",total,true);
+}
+
+function statItem(color, name, n, plain){
+  const dot = plain ? "" : '<span class="dot" style="background:'+color+'"></span>';
+  return '<span class="item">'+dot+name+'：<b style="color:var(--text)">'+n+'</b></span>';
+}
+
+/* 导出回 Markdown（含当前状态） */
+function exportMarkdown(){
+  const mark = { todo:"[ ]", doing:"[~]", done:"[x]", block:"[!]" };
+  let out = "# " + META.title + "\n\n";
+  if (META.subtitle) out += "> " + META.subtitle + "\n\n";
+  DATA.forEach((sec, si) => {
+    out += "## " + sec.title + "\n\n";
+    if (sec.note) out += "> " + sec.note + "\n\n";
+    const line = (tk, subi, ti) => {
+      const id = taskId(si, subi, ti);
+      const st = getStatus(id, tk.status);
+      const text = tk.t.replace(/<[^>]+>/g, "");
+      return "- " + mark[st] + " `" + tk.p + "` " + text + "\n";
+    };
+    if (sec.type === "timeline" && sec.milestones){
+      sec.milestones.forEach(m => { out += "- **" + m.tag + "**（" + (m.when||"") + "）" + (m.title||"") + (m.desc?" — "+m.desc:"") + "\n"; });
+      out += "\n";
+    } else {
+      if (sec.tasks){ sec.tasks.forEach((tk, ti) => out += line(tk, undefined, ti)); out += "\n"; }
+      if (sec.subs) sec.subs.forEach((sub, subi) => {
+        out += "### " + sub.title + "\n\n";
+        sub.tasks.forEach((tk, ti) => out += line(tk, subi, ti)); out += "\n";
+      });
+    }
+  });
+  const blob = new Blob([out], { type:"text/markdown;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (META.title || "export") + ".md";
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+/* 主题切换 */
+function applyTheme(t){ document.documentElement.setAttribute("data-theme", t); localStorage.setItem(THEME_KEY, t); }
+applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+
+document.querySelectorAll(".chip").forEach(chip => chip.onclick = () => {
+  const f = chip.dataset.filter, v = chip.dataset.val;
+  filter[f] = v;
+  document.querySelectorAll('.chip[data-filter="'+f+'"]').forEach(c => c.classList.remove("active"));
+  chip.classList.add("active"); render();
+});
+document.getElementById("themeBtn").onclick = () =>
+  applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+document.getElementById("exportBtn").onclick = exportMarkdown;
+document.getElementById("printBtn").onclick = () => window.print();
+document.getElementById("resetBtn").onclick = () => {
+  if (confirm("确定重置所有任务状态为「待办」？")) { state = {}; saveState(); seedState(); render(); }
+};
+
+seedState();
+render();
+</script>
+</body>
+</html>
