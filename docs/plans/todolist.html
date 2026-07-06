@@ -112,6 +112,7 @@
   .badge.p0 { background: var(--p0); }
   .badge.p1 { background: var(--p1); }
   .badge.p2 { background: var(--p2); }
+  .badge.day { background: var(--panel-2); border: 1px solid var(--border); color: var(--muted); }
   .label { flex: 1; font-size: 14px; }
   .label strong { color: #fff; }
   .task.hidden { display: none; }
@@ -177,26 +178,52 @@ const DATA = [
     title: "第 1 月 · M0 + M2：能帮我炒股的 Agent",
     subs: [
       {
-        title: "M0 骨架跑通",
+        title: "M0 骨架（精简，不拆天级）",
         tasks: [
-          { p: "P0", t: "通读 agentpool 的 agent 加载 / 运行 / LLM 接入机制，记一页速查笔记" },
+          { p: "P0", t: "配置 LLM 接入：<strong>.env</strong> 管理 API Key（<strong>密钥不进 git</strong>，写进 .gitignore 校验）" },
           { p: "P0", t: "规划 packages 职责边界：agent-core（通用内核蓄水池）vs quant-agent（业务）各放什么" },
-          { p: "P0", t: "配置 LLM 接入：.env 管理 API Key（<strong>密钥不进 git</strong>，写进 .gitignore 校验）" },
-          { p: "P0", t: "写第一个最简 agent 的 YAML 配置（基模 + system prompt + 无工具）" },
-          { p: "P0", t: "改造 main.py：用 agentpool 加载该 YAML 并进入对话循环" },
-          { p: "P1", t: "冒烟验证：连续多轮对话不崩，能正常调用基模" },
+          { p: "P0", t: "写最简 quant agent YAML（基模 + system prompt）并用 main.py 加载，跑通多轮对话循环" },
+          { p: "P1", t: "冒烟：连续多轮对话不崩、能正常调用基模" },
         ]
       },
       {
-        title: "M2 协助面（量化炒股）",
+        title: "需求① Week1 · 行情数据接入（让 agent 拿得到数据）",
         tasks: [
-          { p: "P0", t: "行情数据源选型（akshare / tushare / yfinance 等），确定一个先接" },
-          { p: "P0", t: "quant-agent：实现「行情查询」工具（K线 / 基本面）" },
-          { p: "P1", t: "回测框架选型（backtrader / 自研简版），确定方案" },
-          { p: "P1", t: "quant-agent：实现「策略定义 + 回测」工具" },
-          { p: "P0", t: "把行情 / 回测工具挂到 quant agent，支持对话式调用" },
-          { p: "P0", t: "<strong>验收</strong>：对某只股票跑一次「分析 → 建议」（<strong>仅模拟盘，不接实盘下单</strong>）" },
-          { p: "P2", t: "本月复盘：协助基础质量如何（专属度此阶段不测）" },
+          { p: "P0", d: "D1", t: "行情数据源选型（akshare / tushare / yfinance），定一个先接，跑通拉取样例" },
+          { p: "P0", d: "D2", t: "封装数据访问层：历史 K 线 / 实时行情 / 基本面，统一返回结构" },
+          { p: "P0", d: "D3", t: "用 pydantic-ai 把「行情查询」做成 agent 工具（含参数 schema）" },
+          { p: "P0", d: "D4", t: "工具挂到 quant agent，对话式验证「查某股 K 线 / 基本面」" },
+          { p: "P1", d: "D5", t: "数据缓存 + 异常 / 限频处理，冒烟" },
+        ]
+      },
+      {
+        title: "需求② Week2 · 行情分析工具（让 agent 会看盘）",
+        tasks: [
+          { p: "P0", d: "D1", t: "技术指标计算（MA / MACD / RSI / KDJ 等），选库或自算" },
+          { p: "P0", d: "D2", t: "封装 agent 工具「技术指标分析」" },
+          { p: "P1", d: "D3", t: "基本面 / 财务指标解读工具（估值 / 成长 / 财务健康）" },
+          { p: "P0", d: "D4", t: "指标结果结构化，agent 能组织成自然语言解读" },
+          { p: "P0", d: "D5", t: "对话式验证「分析某股当前技术面 / 基本面」" },
+        ]
+      },
+      {
+        title: "需求③ Week3 · 策略定义 + 回测（让 agent 验证想法）",
+        tasks: [
+          { p: "P1", d: "D1", t: "回测框架选型（backtrader / 自研简版），定方案，跑通最小示例" },
+          { p: "P0", d: "D2", t: "定义策略描述 schema（买卖规则 / 参数 / 标的 / 周期）" },
+          { p: "P0", d: "D3", t: "封装「策略定义」工具：对话式生成 / 编辑策略配置" },
+          { p: "P0", d: "D4", t: "封装「回测执行」工具：产出收益 / 回撤 / 胜率等指标" },
+          { p: "P0", d: "D5", t: "回测结果结构化 + 对话式验证「定义策略 → 回测 → 看结果」" },
+        ]
+      },
+      {
+        title: "需求④ Week4 · 分析建议闭环 + 验收（给出可用建议）",
+        tasks: [
+          { p: "P0", d: "D1", t: "编排 system prompt / hook：串起「查行情 → 分析 → 回测 → 建议」推理流程" },
+          { p: "P0", d: "D2", t: "分析建议输出模板（结论 + 依据 + 风险提示）" },
+          { p: "P0", d: "D3", t: "风险红线 hook：拦截实盘下单类请求，强制模拟盘声明（<strong>不接实盘</strong>）" },
+          { p: "P0", d: "D4", t: "<strong>验收</strong>：对某只股票跑一次「分析 → 建议」全流程（<strong>仅模拟盘</strong>）" },
+          { p: "P2", d: "D5", t: "本月复盘：记录协助基础质量（专属度此阶段不测）" },
         ]
       }
     ]
@@ -288,12 +315,20 @@ function makeTask(task, secIdx, subIdx) {
   badge.className = "badge " + task.p.toLowerCase();
   badge.textContent = task.p;
 
+  let dayBadge = null;
+  if (task.d) {
+    dayBadge = document.createElement("span");
+    dayBadge.className = "badge day";
+    dayBadge.textContent = task.d;
+  }
+
   const label = document.createElement("div");
   label.className = "label";
   label.innerHTML = task.t;
 
   el.appendChild(btn);
   el.appendChild(badge);
+  if (dayBadge) el.appendChild(dayBadge);
   el.appendChild(label);
   return el;
 }
