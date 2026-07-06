@@ -138,8 +138,6 @@ python -c "import verl; print('verl OK')"
 python -c "import ray; print(ray.__version__)"
 python -c "import vllm; print(vllm.__version__)"
 
-# 运行内置测试
-python -m pytest tests/test_ppo.py -x -v
 ```
 
 ---
