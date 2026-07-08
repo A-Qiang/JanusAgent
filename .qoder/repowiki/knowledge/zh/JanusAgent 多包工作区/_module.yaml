@@ -1,0 +1,17 @@
+schema_version: 1
+module_path: ""
+title: JanusAgent 多包工作区
+scope:
+    - .gitignore
+    - .gitmodules
+    - .pre-commit-config.yaml
+    - main.py
+    - pyproject.toml
+    - ruff.toml
+    - uv.lock
+    - .python-version
+    - LICENSE
+    - README.md
+source_files: []
+depends_on: []
+related_to: []

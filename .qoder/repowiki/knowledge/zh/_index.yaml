@@ -1,0 +1,35 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: feat/agent-rl
+nodes_managed: true
+exported_at: "2026-07-06T03:08:03Z"
+modules:
+    "":
+        dir_name: JanusAgent 多包工作区
+        title: JanusAgent 多包工作区
+        scope:
+            - .gitignore
+            - .gitmodules
+            - .pre-commit-config.yaml
+            - main.py
+            - pyproject.toml
+            - ruff.toml
+            - uv.lock
+            - .python-version
+            - LICENSE
+            - README.md
+        source_files: []
+        children:
+            - docs
+        depends_on: []
+        related_to: []
+    docs:
+        dir_name: 项目文档与规划资料
+        title: 项目文档与规划资料
+        scope:
+            - docs/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
