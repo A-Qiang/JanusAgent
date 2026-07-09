@@ -222,3 +222,6 @@ __marimo__/
 
 # Agent RL dependencies
 packages/agent-rl/verl/
+
+# MinerU — 文档解析引擎 (单独的 git 仓库，另行管理)
+packages/perception-agent/MinerU/
