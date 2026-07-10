@@ -7,7 +7,13 @@ authors = [
     { name = "qiang.zeng", email = "285093074@qq.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "torch>=2.4.0,<3",
+    "transformers>=4.56.0,<5.0.0",
+    "accelerate>=1.0.0",
+    "pillow>=10.0.0",
+    "mineru-vl-utils[transformers]",
+]
 
 [project.scripts]
 perception-agent = "perception_agent:main"

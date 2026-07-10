@@ -42,7 +42,8 @@ def check_device():
         import torch
         if torch.cuda.is_available():
             device = f"cuda:{torch.cuda.current_device()} ({torch.cuda.get_device_name()})"
-            mem = torch.cuda.get_device_properties(0).total_mem / (1024**3)
+            props = torch.cuda.get_device_properties(0)
+            mem = props.total_memory / (1024**3)
             return device, f"{mem:.1f} GB"
         elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
             return "mps", "MPS (Apple Silicon)"
@@ -157,6 +158,7 @@ def test_raw_transformers(image_path, args):
     直接用 Qwen2VL 的 chat template 进行对话式推理。
     """
     import torch
+    from PIL import Image
     from transformers import (
         AutoProcessor,
         Qwen2VLForConditionalGeneration,
@@ -167,9 +169,9 @@ def test_raw_transformers(image_path, args):
 
     model = Qwen2VLForConditionalGeneration.from_pretrained(
         MODEL_PATH,
-        torch_dtype=torch.bfloat16,
+        dtype=torch.bfloat16,
         device_map="auto",
-        attn_implementation="flash_attention_2",
+        attn_implementation="eager",
     )
     processor = AutoProcessor.from_pretrained(MODEL_PATH, use_fast=True)
 
@@ -221,6 +223,11 @@ def test_raw_transformers(image_path, args):
     print(output_text)
     print("=" * 70)
 
+    if args.output:
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write(output_text)
+        print(f"\n  \033[32m✓ Output saved to: {args.output}\033[0m")
+
     return output_text
 
 
@@ -265,8 +272,15 @@ def test_mineru_client(image_path, args):
         print_sep("Markdown Output")
         print(md)
         print("=" * 70)
+        output_content = md
     except ImportError:
         print("\n(Install mineru-vl-utils with post_process for markdown conversion)")
+        output_content = str(result)
+
+    if args.output:
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write(output_content)
+        print(f"\n  \033[32m✓ Output saved to: {args.output}\033[0m")
 
     return result
 
@@ -282,7 +296,8 @@ Examples:
   %(prog)s /path/to/page.png --prompt "Extract all tables"
   %(prog)s --dry-run              # 只加载模型，不推理
   %(prog)s --info                  # 显示环境信息
-  %(prog)s                         # 用生成的测试图按优先级尝试后端
+   %(prog)s                         # 用生成的测试图按优先级尝试后端
+  %(prog)s /path/to/page.png -o result.md   # 输出保存到文件
 """,
     )
     parser.add_argument("image", nargs="?", default=None, help="Input document image path")
@@ -300,6 +315,8 @@ Examples:
                         help="Only load model, skip inference")
     parser.add_argument("--tiny", action="store_true",
                         help="Generate a tiny test image instead of requiring one")
+    parser.add_argument("-o", "--output", default=None,
+                        help="Save output to file (default: print to stdout)")
 
     args = parser.parse_args()
 
