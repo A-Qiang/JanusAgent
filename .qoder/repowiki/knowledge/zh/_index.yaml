@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: feat/agent-rl
 nodes_managed: true
-exported_at: "2026-07-06T03:08:03Z"
+exported_at: "2026-07-10T02:22:27Z"
 modules:
     "":
-        dir_name: JanusAgent 多包工作区
-        title: JanusAgent 多包工作区
+        dir_name: JanusAgent 多智能体工作区
+        title: JanusAgent 多智能体工作区
         scope:
             - .gitignore
             - .gitmodules
@@ -22,14 +22,38 @@ modules:
         source_files: []
         children:
             - docs
+            - packages
+            - scripts
         depends_on: []
         related_to: []
     docs:
-        dir_name: 项目文档与规划资料
-        title: 项目文档与规划资料
+        dir_name: 项目文档与知识沉淀
+        title: 项目文档与知识沉淀
         scope:
             - docs/
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: packages
+    packages:
+        dir_name: 多 Agent 子系统包集合
+        title: 多 Agent 子系统包集合
+        scope:
+            - packages/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: docs
+            - path: scripts
+    scripts:
+        dir_name: ModelScope 模型下载辅助脚本
+        title: ModelScope 模型下载辅助脚本
+        scope:
+            - scripts/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: packages

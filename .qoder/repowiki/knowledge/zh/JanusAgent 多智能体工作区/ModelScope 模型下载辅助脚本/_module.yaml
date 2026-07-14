@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: scripts
+title: ModelScope 模型下载辅助脚本
+scope:
+    - scripts/
+source_files: []
+depends_on: []
+related_to:
+    - path: packages

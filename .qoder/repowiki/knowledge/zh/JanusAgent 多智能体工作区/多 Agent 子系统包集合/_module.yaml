@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: packages
+title: 多 Agent 子系统包集合
+scope:
+    - packages/
+source_files: []
+depends_on: []
+related_to:
+    - path: docs
+    - path: scripts

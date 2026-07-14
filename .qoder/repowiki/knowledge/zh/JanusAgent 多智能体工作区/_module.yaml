@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: ""
-title: JanusAgent 多包工作区
+title: JanusAgent 多智能体工作区
 scope:
     - .gitignore
     - .gitmodules
