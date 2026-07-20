@@ -9,12 +9,14 @@ dependencies = [
     "agent-rl",
     "quant-agent",
     "companion-agent",
+    "inference-service",
 ]
 
 [tool.uv.workspace]
 members = [
     "packages/*",
 ]
+exclude = ["packages/inference-service"]
 
 [dependency-groups]
 dev = [
@@ -27,3 +29,4 @@ agent-core = { workspace = true }
 agent-rl = { workspace = true }
 quant-agent = { workspace = true }
 companion-agent = { workspace = true }
+inference-service = { path = "packages/inference-service" }

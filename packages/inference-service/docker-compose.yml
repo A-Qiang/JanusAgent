@@ -1,0 +1,29 @@
+services:
+  inference-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: janus/inference-service:latest
+    container_name: janus-inference
+    runtime: nvidia
+    shm_size: "32gb"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - INFERENCE_BACKEND=sglang
+      - INFERENCE_MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-7B-Instruct}
+      - INFERENCE_HOST=0.0.0.0
+      - INFERENCE_PORT=30001
+      - INFERENCE_MANAGEMENT_PORT=31001
+    ports:
+      - "30001:30001"   # SGLang runtime
+      - "31001:31001"   # Janus management API
+    volumes:
+      - ${HF_HOME:-~/.cache/huggingface}:/root/.cache/huggingface
+      - ${MODEL_DIR:-./models}:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

@@ -2,3 +2,9 @@
 	path = packages/agentpool
 	url = https://github.com/A-Qiang/agentpool.git
 	branch = fix/todo-list
+[submodule "packages/perception-agent/minimind"]
+	path = packages/perception-agent/minimind
+	url = https://github.com/jingyaogong/minimind.git
+[submodule "packages/perception-agent/ms-swift"]
+	path = packages/perception-agent/ms-swift
+	url = https://github.com/modelscope/ms-swift.git

@@ -1,0 +1,68 @@
+# MinerU API 服务 - Docker Compose
+#
+# 用法:
+#   1. 确保已构建镜像: docker build -t mineru:latest -f MinerU/docker/china/Dockerfile .
+#   2. 编辑 .env 或通过环境变量指定 GPU 编号、并发数等（见下方默认值）
+#   3. 启动:   docker compose up -d
+#      重启:   docker compose restart
+#      停止:   docker compose down
+#      日志:   docker compose logs -f
+#
+# 参考文档: packages/perception-agent/docs/guide/mineru使用说明.md
+
+services:
+  mineru:
+    image: mineru:latest
+    container_name: mineru
+
+    # ---------- GPU ----------
+    # 钉到指定物理 GPU（默认 1）。
+    # ⚠️ 不能用 count: all —— vLLM 默认占 cuda:0，若 GPU 0 被占会显存不足。
+    #    用 nvidia-smi 查空闲卡编号，改 .env 中的 GPU_DEVICE_ID。
+    #    device_ids 等同于 docker run --gpus '"device=N"'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['${GPU_DEVICE_ID:-1}']
+              capabilities: [gpu]
+
+    # ---------- 运行时 ----------
+    runtime: nvidia
+    shm_size: "32gb"          # 共享内存，大文件处理防 OOM
+    ipc: host                 # 等同 --ipc=host，提升多进程通信性能
+
+    # ---------- 端口映射 ----------
+    # 容器内服务监听 8000，外部通过 8001 访问
+    ports:
+      - "${MINERU_PORT_VLM:-30000}:30000"   # vLLM OpenAI 兼容服务
+      - "${MINERU_PORT_GRADIO:-7860}:7860"   # Gradio UI
+      - "${MINERU_PORT_API:-8001}:8000"      # MinerU API 主服务
+      - "${MINERU_PORT_EXTRA:-8002}:8002"    # 备用端口
+
+    # ---------- 环境变量 ----------
+    # ENTRYPOINT 已内置 export MINERU_MODEL_SOURCE=local，此处无需重复设置
+    environment:
+      - MINERU_API_MAX_CONCURRENT_REQUESTS=${MINERU_MAX_CONCURRENT:-8}
+
+    # ---------- 数据持久化 ----------
+    # 解析结果输出到宿主机，容器重启后不丢失
+    volumes:
+      - ${MINERU_WORKSPACE:-/data/zengqiang/mineru-workspace}:/vllm-workspace/output
+
+    # ---------- 启动命令 ----------
+    # ENTRYPOINT: /bin/bash -c 'export MINERU_MODEL_SOURCE=local && exec "$@"'
+    # command 作为参数传给 ENTRYPOINT
+    command: ["mineru-api", "--host", "0.0.0.0", "--port", "8000"]
+
+    # ---------- 重启策略 ----------
+    restart: unless-stopped
+
+    # ---------- 健康检查 ----------
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s   # vLLM 引擎初始化较慢，给足启动时间

@@ -1,0 +1,57 @@
+# ============================================================
+# MinerU2.5 LoRA SFT — 默认训练配置
+# 参考: https://github.com/modelscope/ms-swift
+# ============================================================
+
+# -------- 模型 ----------
+model_name_or_path: /home/zengqiang/models/MinerU2.5-Pro-2605-1.2B
+model_type: qwen2_vl
+template: ocr
+trust_remote_code: true
+
+# -------- LoRA 配置 --------
+lora_target_modules:
+  - ALL
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.0
+lora_dtype: bfloat16
+tuner_type: lora             # lora | lora_llm | full
+freeze_vit: true             # 冻结 ViT 视觉编码器
+
+# -------- 数据 ----------
+dataset: /home/zengqiang/projects/JanusAgent/packages/perception-agent/finetune/data/train.jsonl
+val_dataset: /home/zengqiang/projects/JanusAgent/packages/perception-agent/finetune/data/val.jsonl
+dataset_num_proc: 4
+split_dataset_ratio: 0.0     # 已预先划分
+
+# -------- 训练 ----------
+output_dir: ./experiments/exp-001
+do_train: true
+do_eval: true
+eval_steps: 500
+save_steps: 500
+logging_steps: 10
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 16
+learning_rate: 1.0e-4
+num_train_epochs: 3
+warmup_ratio: 0.03
+weight_decay: 0.05
+lr_scheduler: cosine
+save_total_limit: 3
+deepseed: null                 # 单卡 / ZeRO2 配置
+
+# -------- 精度与加速 -------
+bf16: true
+fp16: false
+ddp_find_unused_parameters: false
+gradient_checkpointing: true
+flash_attn: auto              # flash-attn 加速
+packing: false                # packing 加速（需 >=2 卡）
+
+# -------- 评估 -------
+metric_for_best_model: loss
+greater_is_better: false
+load_best_model_at_end: true

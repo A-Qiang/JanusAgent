@@ -71,3 +71,68 @@ python test_mineru_model.py /path/to/your/image.png --backend raw -o result.md
 | `--dry-run` | 仅加载模型配置，不推理 |
 | `--info` | 查看系统和依赖信息 |
 | `--tiny` | 生成测试图片代替手动传入 |
+
+## Docker 部署
+
+MinerU API 服务支持通过 Docker Compose 一键部署管理，配置文件见 [docker-compose.yml](./docker-compose.yml)。
+
+### 前置条件
+
+```bash
+# 1. 构建 MinerU 镜像（首次或 Dockerfile 变更时执行）
+docker build -t mineru:latest -f MinerU/docker/china/Dockerfile .
+
+# 2. 确认空闲 GPU 编号
+nvidia-smi --query-gpu=index,memory.used,memory.free --format=csv,noheader
+```
+
+### 启动 / 重启 / 停止
+
+```bash
+# 启动（后台运行）
+docker compose up -d
+
+# 重启服务
+docker compose restart
+
+# 查看日志
+docker compose logs -f
+
+# 停止并删除容器（数据卷保留）
+docker compose down
+
+# 修改代码后重新构建并启动
+docker compose up -d --build
+```
+
+### 可配置项
+
+通过环境变量或 `.env` 文件覆盖默认配置：
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `GPU_DEVICE_ID` | `1` | 钉定的物理 GPU 编号（**不可用 all**，vLLM 默认占 cuda:0） |
+| `MINERU_MAX_CONCURRENT` | `8` | 并发解析任务上限（MinerU 默认仅 3） |
+| `MINERU_PORT_API` | `8001` | 宿主机 API 访问端口（容器内固定 8000） |
+| `MINERU_PORT_VLM` | `30000` | vLLM OpenAI 兼容服务端口 |
+| `MINERU_PORT_GRADIO` | `7860` | Gradio UI 端口 |
+| `MINERU_PORT_EXTRA` | `8002` | 备用端口 |
+| `MINERU_WORKSPACE` | `/data/zengqiang/mineru-workspace` | 解析结果输出目录 |
+
+```bash
+# 示例：换用 GPU 2 + 并发提到 16
+GPU_DEVICE_ID=2 MINERU_MAX_CONCURRENT=16 docker compose up -d
+```
+
+### 验证
+
+```bash
+# 健康检查
+curl -s http://localhost:8001/health
+# 期望: {"status":"ok", "max_concurrent_requests": 8}
+
+# API 文档
+# 浏览器打开 http://localhost:8001/docs
+```
+
+> 详细 API 接口说明见 [MinerU API 使用说明](./docs/guide/mineru使用说明.md)。

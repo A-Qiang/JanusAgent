@@ -225,3 +225,10 @@ packages/agent-rl/verl/
 
 # MinerU — 文档解析引擎 (单独的 git 仓库，另行管理)
 packages/perception-agent/MinerU/
+
+# OpenCode / OMO 运行时数据（任务编排、会话、缓存）
+.omo/
+
+# Codegraph 索引（运行时生成的符号链接，指向 OMO 缓存）
+.codegraph/
+.codegraph

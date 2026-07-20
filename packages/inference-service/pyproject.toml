@@ -1,0 +1,28 @@
+[project]
+name = "inference-service"
+version = "0.1.0"
+description = "JanusAgent model inference service — unified engine abstraction over SGLang/vLLM with production-grade serving."
+authors = [{ name = "JanusAgent Contributors" }]
+license = { text = "MIT" }
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.6",
+    "httpx>=0.28.0",
+    "uvicorn[standard]>=0.34.0",
+]
+
+[project.optional-dependencies]
+sglang = ["sglang>=0.4", "pybase64>=1.4"]
+vllm = ["vllm>=0.6"]
+
+[project.urls]
+Source = "https://github.com/A-Qiang/JanusAgent"
+
+[project.scripts]
+inference-service = "inference_service.__main__:main"
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12.0"]
+build-backend = "uv_build"

@@ -1,0 +1,38 @@
+[project]
+name = "perception-agent-finetune"
+version = "0.1.0"
+description = "MinerU2.5 LoRA SFT fine-tuning pipeline – data, configs, training scripts & experiments"
+requires-python = ">=3.12"
+dependencies = [
+    "ms-swift>=3.0",
+    "torch>=2.4",
+    "transformers>=4.44",
+    "datasets>=2.20",
+    "accelerate>=0.33",
+    "tensorboard",
+    "wandb",
+    "sentencepiece>=0.2",
+    "einops",
+    "flash-attn>=2.6",
+    "pyyaml",
+    "jsonlines",
+    "pillow",
+    "tqdm",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[build-system]
+requires = ["hatchling>=1.24", "editables>=0.6"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
